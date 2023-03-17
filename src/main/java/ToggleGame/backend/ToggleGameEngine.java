@@ -15,7 +15,7 @@ import java.util.Random;
  * This file is incomplete and should be completed
  * Once it is completed please update this message
  */
-public class ToggleGameEngine implements ToggleGameInteraction {
+public class  ToggleGameEngine implements ToggleGameInteraction {
 
     /**
      * Initialize and return the game board for a ToggleGame (9x "1")
@@ -24,7 +24,8 @@ public class ToggleGameEngine implements ToggleGameInteraction {
     @Override
     public String initializeGame() {
         //starter code ... replace the below code with a string containing all 1's
-        return GameHelper.generateRandomBoard();
+        String ret ="111111111";
+        return ret;
     }
 
     /**
@@ -60,6 +61,9 @@ public class ToggleGameEngine implements ToggleGameInteraction {
     @Override
     public int[] movesToSolve(String current, String target) {
         //starter code ... replace the below
+        if (current == target){
+            return new int[0];
+        }
         return new int[] {new Random().nextInt(9)};
     }
 
@@ -77,6 +81,9 @@ public class ToggleGameEngine implements ToggleGameInteraction {
     @Override
     public int minNumberOfMoves(String current, String target) {
         //starter code ... replace the below
+        if (current == target){
+            return 0;
+        }
         return new Random().nextInt(9);
     }
 }
