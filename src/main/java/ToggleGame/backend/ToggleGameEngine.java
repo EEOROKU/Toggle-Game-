@@ -1,8 +1,15 @@
 package ToggleGame.backend;
 import ToggleGame.frontend.ToggleGameInteraction;
 
-import java.util.Random;
+import java.util.*;
+/**
+ AI Assistance was used in the following methods in this file:
 
+ - TOGGLE_RULES()
+ - buttonClicked()
+ - movesToSolve()
+
+ **/
 /**
  * Buttons have the following order / placement on the screen
  *
@@ -16,7 +23,17 @@ import java.util.Random;
  * Once it is completed please update this message
  */
 public class  ToggleGameEngine implements ToggleGameInteraction {
-
+    private static final int[][] TOGGLE_RULES = {
+            {0, 1, 3},
+            {0, 1, 2, 4},
+            {1, 2, 5},
+            {0, 3, 4, 6},
+            {1, 3, 4, 5, 7},
+            {2, 4, 5, 8},
+            {3, 6, 7},
+            {4, 6, 7, 8},
+            {5, 7, 8}
+    };
     /**
      * Initialize and return the game board for a ToggleGame (9x "1")
      * @return the String "111111111" to start a game with all white squares
@@ -39,12 +56,16 @@ public class  ToggleGameEngine implements ToggleGameInteraction {
      *
      * @throws IllegalArgumentException when button is outside 0-8
      */
+
     @Override
     public String buttonClicked(String current, int button) {
         //starter code...replace the below code
-        return GameHelper.generateRandomBoard();
+        char[] board = current.toCharArray();
+        for (int i : TOGGLE_RULES[button]) {
+            board[i] = board[i] == '0' ? '1' : '0';
+        }
+        return new String(board);
     }
-
 
     /**
      * Return a sequence of moves that leads in the minimum number of moves
@@ -61,10 +82,38 @@ public class  ToggleGameEngine implements ToggleGameInteraction {
     @Override
     public int[] movesToSolve(String current, String target) {
         //starter code ... replace the below
-        if (current == target){
+        if (current.equals(target)) {
             return new int[0];
         }
-        return new int[] {new Random().nextInt(9)};
+
+        Queue<String> queue = new LinkedList<>();
+        Map<String, List<Integer>> visited = new HashMap<>();
+
+        queue.add(current);
+        visited.put(current, new ArrayList<>());
+
+        while (!queue.isEmpty()) {
+            String cur = queue.poll();
+            List<Integer> curMoves = visited.get(cur);
+
+            for (int i = 0; i < 9; i++) {
+                String nextState = buttonClicked(cur, i);
+                if (visited.containsKey(nextState)) {
+                    continue;
+                }
+                List<Integer> nextMoves = new ArrayList<>(curMoves);
+                nextMoves.add(i);
+
+                if (nextState.equals(target)) {
+                    return nextMoves.stream().mapToInt(Integer::intValue).toArray();
+                }
+
+                visited.put(nextState, nextMoves);
+                queue.add(nextState);
+            }
+        }
+
+        return new int[0];
     }
 
     /**
@@ -81,9 +130,9 @@ public class  ToggleGameEngine implements ToggleGameInteraction {
     @Override
     public int minNumberOfMoves(String current, String target) {
         //starter code ... replace the below
-        if (current == target){
+        if (current.equals(target)) {
             return 0;
         }
-        return new Random().nextInt(9);
+        return movesToSolve(current, target).length;
     }
 }
